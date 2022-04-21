@@ -12,7 +12,7 @@ export const rawHeadAppendChild = HTMLHeadElement.prototype.appendChild;
 const rawHeadRemoveChild = HTMLHeadElement.prototype.removeChild;
 const rawBodyAppendChild = HTMLBodyElement.prototype.appendChild;
 const rawBodyRemoveChild = HTMLBodyElement.prototype.removeChild;
-const rawHeadInsertBefore = HTMLHeadElement.prototype.insertBefore;
+export const rawHeadInsertBefore = HTMLHeadElement.prototype.insertBefore;
 const rawRemoveChild = HTMLElement.prototype.removeChild;
 
 const SCRIPT_TAG_NAME = 'SCRIPT';
@@ -89,6 +89,8 @@ function manualInvokeElementOnError(element: HTMLLinkElement | HTMLScriptElement
   }
 }
 
+export const REFERNCE_ID = 'reference-id';
+
 function convertLinkAsStyle(
   element: HTMLLinkElement,
   postProcess: (styleElement: HTMLStyleElement) => void,
@@ -96,6 +98,10 @@ function convertLinkAsStyle(
 ): HTMLStyleElement {
   const styleElement = document.createElement('style');
   const { href } = element;
+  const referenceId = element.getAttribute(REFERNCE_ID);
+  if (referenceId) {
+    styleElement.setAttribute(REFERNCE_ID, referenceId);
+  }
   // add source link element href
   styleElement.dataset.qiankunHref = href;
 

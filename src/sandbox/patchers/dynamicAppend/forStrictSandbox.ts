@@ -8,9 +8,11 @@ import { nativeGlobal } from '../../../utils';
 import { getCurrentRunningApp } from '../../common';
 import type { ContainerConfig } from './common';
 import {
+  REFERNCE_ID,
   isHijackingTag,
   patchHTMLDynamicAppendPrototypeFunctions,
   rawHeadAppendChild,
+  rawHeadInsertBefore,
   rebuildCSSRules,
   recordStyledComponentsCSSRules,
 } from './common';
@@ -130,6 +132,14 @@ export function patchStrictSandbox(
       rebuildCSSRules(dynamicStyleSheetElements, (stylesheetElement) => {
         const appWrapper = appWrapperGetter();
         if (!appWrapper.contains(stylesheetElement)) {
+          const referenceId = stylesheetElement.getAttribute(REFERNCE_ID);
+          if (referenceId) {
+            const referenceDom = appWrapper.querySelector(`#${referenceId}`);
+            if (referenceDom?.parentNode === appWrapper) {
+              rawHeadInsertBefore.call(appWrapper, stylesheetElement, referenceDom);
+              return true;
+            }
+          }
           rawHeadAppendChild.call(appWrapper, stylesheetElement);
           return true;
         }
