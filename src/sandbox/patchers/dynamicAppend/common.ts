@@ -90,6 +90,7 @@ function manualInvokeElementOnError(element: HTMLLinkElement | HTMLScriptElement
 }
 
 export const REFERNCE_ID = 'reference-id';
+const DYNAMIC_THEME_ID = 'dark-light-theme-id';
 
 function convertLinkAsStyle(
   element: HTMLLinkElement,
@@ -101,6 +102,7 @@ function convertLinkAsStyle(
   const referenceId = element.getAttribute(REFERNCE_ID);
   if (referenceId) {
     styleElement.setAttribute(REFERNCE_ID, referenceId);
+    styleElement.setAttribute(DYNAMIC_THEME_ID, element.id);
   }
   // add source link element href
   styleElement.dataset.qiankunHref = href;
@@ -211,9 +213,15 @@ function getOverwrittenAppendChildOrInsertBefore(opts: {
               css.process(mountDOM, stylesheetElement, appName);
             }
           }
-
+          const existThemeStyle = dynamicStyleSheetElements.find(
+            (cache) =>
+              stylesheetElement.getAttribute(DYNAMIC_THEME_ID) &&
+              cache.getAttribute(DYNAMIC_THEME_ID) === stylesheetElement.getAttribute(DYNAMIC_THEME_ID),
+          );
           // eslint-disable-next-line no-shadow
-          dynamicStyleSheetElements.push(stylesheetElement);
+          if (!existThemeStyle) {
+            dynamicStyleSheetElements.push(stylesheetElement);
+          }
           const referenceNode = mountDOM.contains(refChild) ? refChild : null;
           return rawDOMAppendOrInsertBefore.call(mountDOM, stylesheetElement, referenceNode);
         }

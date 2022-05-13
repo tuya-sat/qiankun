@@ -78,6 +78,7 @@ function manualInvokeElementOnError(element) {
 }
 
 export var REFERNCE_ID = 'reference-id';
+var DYNAMIC_THEME_ID = 'dark-light-theme-id';
 
 function convertLinkAsStyle(element, postProcess) {
   var fetchFn = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : fetch;
@@ -87,6 +88,7 @@ function convertLinkAsStyle(element, postProcess) {
 
   if (referenceId) {
     styleElement.setAttribute(REFERNCE_ID, referenceId);
+    styleElement.setAttribute(DYNAMIC_THEME_ID, element.id);
   } // add source link element href
 
 
@@ -178,10 +180,16 @@ function getOverwrittenAppendChildOrInsertBefore(opts) {
               } else {
                 css.process(mountDOM, stylesheetElement, appName);
               }
-            } // eslint-disable-next-line no-shadow
+            }
 
+            var existThemeStyle = dynamicStyleSheetElements.find(function (cache) {
+              return stylesheetElement.getAttribute(DYNAMIC_THEME_ID) && cache.getAttribute(DYNAMIC_THEME_ID) === stylesheetElement.getAttribute(DYNAMIC_THEME_ID);
+            }); // eslint-disable-next-line no-shadow
 
-            dynamicStyleSheetElements.push(stylesheetElement);
+            if (!existThemeStyle) {
+              dynamicStyleSheetElements.push(stylesheetElement);
+            }
+
             var referenceNode = mountDOM.contains(refChild) ? refChild : null;
             return rawDOMAppendOrInsertBefore.call(mountDOM, stylesheetElement, referenceNode);
           }
