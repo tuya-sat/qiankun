@@ -16,11 +16,12 @@ var rawRemoveChild = HTMLElement.prototype.removeChild;
 var SCRIPT_TAG_NAME = 'SCRIPT';
 var LINK_TAG_NAME = 'LINK';
 var STYLE_TAG_NAME = 'STYLE';
+var DIV_TAG_NAME = 'DIV';
 export function isExecutableScriptType(script) {
   return !script.type || ['text/javascript', 'module', 'application/javascript', 'text/ecmascript', 'application/ecmascript'].indexOf(script.type) !== -1;
 }
 export function isHijackingTag(tagName) {
-  return (tagName === null || tagName === void 0 ? void 0 : tagName.toUpperCase()) === LINK_TAG_NAME || (tagName === null || tagName === void 0 ? void 0 : tagName.toUpperCase()) === STYLE_TAG_NAME || (tagName === null || tagName === void 0 ? void 0 : tagName.toUpperCase()) === SCRIPT_TAG_NAME;
+  return (tagName === null || tagName === void 0 ? void 0 : tagName.toUpperCase()) === LINK_TAG_NAME || (tagName === null || tagName === void 0 ? void 0 : tagName.toUpperCase()) === STYLE_TAG_NAME || (tagName === null || tagName === void 0 ? void 0 : tagName.toUpperCase()) === SCRIPT_TAG_NAME || (tagName === null || tagName === void 0 ? void 0 : tagName.toUpperCase()) === DIV_TAG_NAME;
 }
 /**
  * Check if a style element is a styled-component liked.
@@ -250,6 +251,15 @@ function getOverwrittenAppendChildOrInsertBefore(opts) {
             var dynamicInlineScriptCommentElement = document.createComment('dynamic inline script replaced by qiankun');
             dynamicScriptAttachedCommentMap.set(element, dynamicInlineScriptCommentElement);
             return rawDOMAppendOrInsertBefore.call(_mountDOM, dynamicInlineScriptCommentElement, _referenceNode);
+          }
+
+        case DIV_TAG_NAME:
+          {
+            var _mountDOM2 = appWrapperGetter();
+
+            var _referenceNode2 = _mountDOM2.contains(refChild) ? refChild : null;
+
+            return rawDOMAppendOrInsertBefore.call(_mountDOM2, element, _referenceNode2);
           }
 
         default:
