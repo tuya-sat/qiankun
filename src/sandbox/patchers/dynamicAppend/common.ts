@@ -18,6 +18,7 @@ const rawRemoveChild = HTMLElement.prototype.removeChild;
 const SCRIPT_TAG_NAME = 'SCRIPT';
 const LINK_TAG_NAME = 'LINK';
 const STYLE_TAG_NAME = 'STYLE';
+const DIV_TAG_NAME = 'DIV';
 
 export function isExecutableScriptType(script: HTMLScriptElement) {
   return (
@@ -32,7 +33,8 @@ export function isHijackingTag(tagName?: string) {
   return (
     tagName?.toUpperCase() === LINK_TAG_NAME ||
     tagName?.toUpperCase() === STYLE_TAG_NAME ||
-    tagName?.toUpperCase() === SCRIPT_TAG_NAME
+    tagName?.toUpperCase() === SCRIPT_TAG_NAME ||
+    tagName?.toUpperCase() === DIV_TAG_NAME
   );
 }
 
@@ -275,6 +277,12 @@ function getOverwrittenAppendChildOrInsertBefore(opts: {
           const dynamicInlineScriptCommentElement = document.createComment('dynamic inline script replaced by qiankun');
           dynamicScriptAttachedCommentMap.set(element, dynamicInlineScriptCommentElement);
           return rawDOMAppendOrInsertBefore.call(mountDOM, dynamicInlineScriptCommentElement, referenceNode);
+        }
+
+        case DIV_TAG_NAME: {
+          const mountDOM = appWrapperGetter();
+          const referenceNode = mountDOM.contains(refChild) ? refChild : null;
+          return rawDOMAppendOrInsertBefore.call(mountDOM, element, referenceNode);
         }
 
         default:
